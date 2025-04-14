@@ -11,29 +11,36 @@ import java.util.stream.IntStream;
 @Repository
 public class ProductRepository {
     private final List<Product> PRODUCTS = new ArrayList<>();
+    private int globalId;
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return PRODUCTS;
     }
 
-    public Product addProduct(Product product){
+    public void addProduct(Product product) {
+        globalId++;
+        product.setId(globalId);
         PRODUCTS.add(product);
-        return product;
     }
 
-    public Product updateProduct(Product product){
-        Product searchingProduct = PRODUCTS.stream().filter(pr -> pr.getId()==product.getId()).findFirst().orElse(null);
-        if(searchingProduct!=null){
+    public Product updateProduct(Product product) {
+        Product searchingProduct = findProduct(product);
+        if (searchingProduct != null) {
             searchingProduct.setPrice(product.getPrice());
             searchingProduct.setTitle(product.getTitle());
         }
         return searchingProduct;
     }
 
-    public void deleteProduct(String title){
-        Product searchingProduct = PRODUCTS.stream().filter(pr -> pr.getTitle().equals(title)).findFirst().orElse(null);
-        if(searchingProduct!=null){
-            PRODUCTS.remove(searchingProduct);
-        }
+    public boolean deleteProduct(Product product) {
+        return PRODUCTS.remove(product);
+    }
+
+    public Product getFirst() {
+        return PRODUCTS.get(0);
+    }
+
+    public Product findProduct(Product product) {
+        return PRODUCTS.stream().filter(pr -> pr.getId() == product.getId()).findFirst().orElse(null);
     }
 }
